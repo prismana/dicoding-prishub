@@ -8,20 +8,21 @@ const requestListener = (request, response) => {
     response.statusCode = 200
 
     if (method === "POST") {
-        response.end('<h1>Hai ini post</h1>')
+        let body = [];
+
+        request.on('data', (chunk) => {
+            body.push(chunk);
+        });
+
+        request.on('end', () => {
+            body = Buffer.concat(body).toString();
+            const { name } = JSON.parse(body);
+            response.end(`<h1>Hai, ${name}!</h1><br>\n`);
+        });
     }
     if (method === "GET") {
         response.end('<h1>Hai ini get</h1>')
     }
-    if (method === "PUT") {
-        response.end('<h1>Hai ini put</h1>')
-    }
-    if (method === "DELETE") {
-        response.end('<h1>Hai ini delete</h1>')
-    }
-
-    response.statusCode = 200;
-    response.end('<h1>Hallo HTTP Server!</h1>')
 }
 
 const server = http.createServer(requestListener);
