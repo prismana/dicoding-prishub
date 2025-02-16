@@ -1,3 +1,4 @@
 .idea
 nodejs-basic/package-lock.json
 nodejs-basic/node_modules/*
+hapi-web-server/node_modules/*
