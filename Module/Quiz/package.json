@@ -1,0 +1,13 @@
+{
+    "name": "quiz-module",
+    "version": "1.0.0",
+    "description": "ini adalah quiz dari modul module JavaScript di Dicoding",
+    "main": "main.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "coba": "node main.js"
+    },
+    "author": "Prismana",
+    "license": "ISC"
+}
