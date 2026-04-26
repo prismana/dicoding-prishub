@@ -1,5 +1,4 @@
 // Do your work here...
-
 // Inisiasi key local storage book
 const books = [];
 const STORAGE_KEY = 'BOOKS_KEY';
@@ -8,14 +7,17 @@ const SAVED_EVENT = 'saved-book';
 
 // Inisiasi button dan elemen html
 const addBookButton = document.getElementById('bookFormSubmit');
-//const buttonSearch = document.getElementById('searchSubmit');
+const formSearch = document.getElementById('searchBook');
 const buttonFinish = document.getElementById('btn-finish');
 const buttonDelete = document.getElementById('btn-delete');
 
+const searchBookTitle = document.getElementById('searchBookTitle');
 const bookTitle = document.getElementById('bookFormTitle');
 const bookAuthor = document.getElementById('bookFormAuthor');
 const bookYear = document.getElementById('bookFormYear');
 const bookIsComplete = document.getElementById('bookFormIsComplete');
+let currentKeyword = '';
+
 
 function saveBooksData() {
     const parsed = JSON.stringify(books);
@@ -24,12 +26,20 @@ function saveBooksData() {
     document.dispatchEvent(new Event(RENDER_EVENT));
 }
 
-// Get book items from local storage
-function getBookItems() {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY));
+// Ambil data dari local storage
+function loadDataFromStorage() {
+    let data =  JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+    if (data !== null) {
+        for (const book of data) {
+            books.push(book);
+        }
+    }
+
+    document.dispatchEvent(new Event(RENDER_EVENT));
 }
 
-// Delete book item by book id
+// Hapus buku
 function deleteBookItem(bookId) {
     console.log(books);
     const bookIndex = books.findIndex(book => book.id === bookId);
@@ -62,9 +72,8 @@ function toUnfinishBook(bookId) {
     saveBooksData();
 }
 
-// Make book element
+// Buat elemen buku
 function createBook(bookItem) {
-    // create element
     const bookDiv = document.createElement('div');
     bookDiv.classList.add('book');
     bookDiv.setAttribute('data-bookid', String(bookItem.id));
@@ -126,13 +135,27 @@ function createBook(bookItem) {
 }
 
 // Render Buku dari local storage
-function renderBookList() {
+function renderBooksList() {
+    const completeBookList = document.getElementById('completeBookList');
+    const incompleteBookList = document.getElementById('incompleteBookList');
 
-    const bookItem = getBookItems();
+    completeBookList.innerHTML = '';
+    incompleteBookList.innerHTML = '';
 
-    //cek apakah buku belum selesai dibaca
+    const normalizedKeyword = currentKeyword.trim().toLowerCase();
 
+    const fliteredBooks = books.filter(book => 
+        book.title.toLowerCase().includes(normalizedKeyword)
+    );
 
+    for (const bookItem of fliteredBooks) {
+        const bookElement = createBook(bookItem);
+        if (!bookItem.isComplete) {
+            incompleteBookList.append(bookElement);
+        } else {
+            completeBookList.append(bookElement);
+        }
+    };
 }
 
 // Mencoba listener untuk checklist buku selesai dibaca
@@ -143,7 +166,7 @@ function renderBookList() {
 // })
 
 
-// Event listener for add book item
+// Event listener untuk submit form tambah buku
 addBookButton.addEventListener('click', (event) => {
     event.preventDefault();
 
@@ -163,20 +186,13 @@ addBookButton.addEventListener('click', (event) => {
     document.dispatchEvent(new Event(RENDER_EVENT));
 });
 
-// Listener dokumen
-document.addEventListener(RENDER_EVENT, () => {
-    const completeBookList = document.getElementById('completeBookList');
-    completeBookList.innerHTML = '';
-
-    const incompleteBookList = document.getElementById('incompleteBookList');
-    incompleteBookList.innerHTML = '';
-
-    for (const bookItem of books) {
-        const bookElement = createBook(bookItem);
-        if (!bookItem.isComplete) {
-            incompleteBookList.append(bookElement);
-        } else {
-            completeBookList.append(bookElement);
-        }
-    };
+formSearch.addEventListener('submit', (event) => {
+    event.preventDefault();
+    currentKeyword = searchBookTitle.value.trim().toLowerCase();
+    document.dispatchEvent(new Event(RENDER_EVENT));
 });
+
+// Listener document
+document.addEventListener('DOMContentLoaded', loadDataFromStorage);
+
+document.addEventListener(RENDER_EVENT, renderBooksList);
