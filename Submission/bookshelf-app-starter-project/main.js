@@ -8,6 +8,7 @@ const SAVED_EVENT = 'saved-book';
 
 // Inisiasi button dan elemen html
 const addBookButton = document.getElementById('bookFormSubmit');
+//const buttonSearch = document.getElementById('searchSubmit');
 const buttonFinish = document.getElementById('btn-finish');
 const buttonDelete = document.getElementById('btn-delete');
 
@@ -44,10 +45,19 @@ function deleteBookItem(bookId) {
 // Ganti ke sudah dibaca
 function toFinishBook(bookId) {
     const bookIndex = books.findIndex(book => book.id === bookId);
-
     if (bookIndex === -1) return;
 
     books[bookIndex].isComplete = true;
+    document.dispatchEvent(new Event(RENDER_EVENT));
+    saveBooksData();
+}
+
+//Ganti ke belum selesai dibaca
+function toUnfinishBook(bookId) {
+    const bookIndex = books.findIndex(book => book.id === bookId);
+    if(bookIndex === -1) return;
+
+    books[bookIndex].isComplete = false;
     document.dispatchEvent(new Event(RENDER_EVENT));
     saveBooksData();
 }
@@ -82,6 +92,7 @@ function createBook(bookItem) {
     
         buttonFinish.addEventListener('click', () => {
             console.log('akan ke belum selesai dibaca');
+            toUnfinishBook(bookItem.id);
         });
     } else {
         buttonFinish.setAttribute('data-testid', 'bookItemIsCompleteButton');
@@ -89,6 +100,7 @@ function createBook(bookItem) {
     
         buttonFinish.addEventListener('click', () => {
             console.log('akan ke selesai dibaca');
+            toFinishBook(bookItem.id);
         });
     }
 
@@ -122,6 +134,13 @@ function renderBookList() {
 
 
 }
+
+// Mencoba listener untuk checklist buku selesai dibaca
+// bookIsComplete.addEventListener('change', () => {
+//     if (bookIsComplete.checked) {
+//         addBookButton.textContent. = 
+//     }
+// })
 
 
 // Event listener for add book item
