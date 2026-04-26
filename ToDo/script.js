@@ -198,7 +198,7 @@ document.addEventListener(RENDER_EVENT, function () {
 });
 
 document.addEventListener(SAVED_EVENT, function () {
-    consoke.log(localStorage.getItem(STORAGE_KEY));
+    console.log(localStorage.getItem(STORAGE_KEY));
 });
 
 
@@ -207,6 +207,7 @@ const newObject = {
     dua: 'dua',
     tiga: true,
 };
+
 localStorage.setItem('newItem', JSON.stringify(newObject));
 const getObject = localStorage.getItem('newItem');
 console.log(`${getObject.satu} ${getObject.dua} ${getObject.tiga}`);
